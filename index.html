@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+/* Button used to open the chat form - fixed at the bottom of the page */
+.open-button {
+  padding: 16px 20px;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 200px;
+
+
+  background-color: #0052cc;
+    color: #fff;
+    outline: none;
+    height: 50px;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 1px 2px 0 #7a869a;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+h1 {
+  margin: 5px;
+  font-size: 25px;
+}
+/* The popup chat - hidden by default */
+.chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width textarea */
+.form-container textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+  min-height: 50px;
+}
+
+/* When the textarea gets focus, do something */
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/send button */
+.form-container .btn {
+  background-color: #0052cc;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 45%;
+  margin-bottom:10px;
+  opacity: 1;
+  font-size: 18px;
+  margin-left: 7px;
+  height: 10px;
+line-height: 2px;
+    border-radius: 5px;
+
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel  {
+  background-color: #f3f3f7;
+  color: grey;
+}
+
+.closeall{
+  background-color: #f3f3f7;
+  color: grey;
+  width: 95% !important;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 0.9;
+}
+
+#summary{
+  margin-bottom: 5px !important;
+}
+
+#description{
+  height: 100px !important;
+}
+
+table {
+      border-radius: 5px;
+
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+td{border: 1px solid #dddddd;
+  text-align: left;
+  padding: 5px;
+
+
+}
+ th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 5px;
+  background-color: #0052cc;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+</style>
+</head>
+
+<body>
+    <h2>Ticketing Widget POC</h2>
+    <div style="width:50%; text-align: justify;">
+    <p>Concept:</p>
+    <p>A Widget needs to be available on the dashboard which first allows the Dashboard User to check for relevant articles, then the User can go ahead and search via a relevant Keyword.
+    Now, all articles are stored at CS's Knowledge base, which is maintained by Aaryender and can be found here: https://wizrocket.atlassian.net/wiki/spaces/CSK/overview</p>
+    <p>The number of articles shown as per result are restricted to 5 for the POC and are ordered by score given to each result by Confluence search api itself.</p>
+    <p>Clicking any of the articles in this POC will can open up a modal with details of the article, it can also be redirected to the main conflunce page.</p>
+    <p>If the Dashboard User is unable to find any article useful for him/herself, they can go ahead an contact DK.</p>
+    <p>Here, they can log a summary and complete description of the problem they are facing. The widget on submit click finds meta data and combines it with User Input to create a Jira Ticket.</p>
+    <p>For POC purposes a few values have been hardcoded and attached to the description the User enters, this is after the User clicks on sumbit button.</p>
+    <p>Also, this widget is working perfectly, so each time someone clicks on submit a ticket is logged, so be carefully while checking this around.</p>
+    <p>Lastly, you can check the ticket created on to the last page, where if you clcik you will be taken to the portal with detais of the ticket and also if you explore you can see all past tickets.</p>
+    </div>
+    <button class="open-button" onclick="openForm()">We are here!</button>
+    <div class="chat-popup" id="myhelpForm">
+        <div class="form-container">
+            <h1 style="text-align: center;">Help</h1>
+            <textarea placeholder="Type search keywords[e.g.: Webpush]" name="msg" id="searchkey" required></textarea>
+            <button type="button" id="searchSubmit" onclick="search()" class="btn">Search</button>
+            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+            <div id="searchResults" style="display: none">
+                <ul id="results"></ul>
+                <h4 style="text-align: center;">Can't find what you are looking for?</h4>
+                <button class="btn" style="width: 95%" onclick="openJiraForm()">Contact DK</button>
+            </div>
+        </div>
+    </div>
+    <div class="chat-popup" id="jiraForm">
+        <div class="form-container">
+            <h1 style="text-align: center;">Support</h1>
+            <textarea placeholder="Summary" name="msg" id="summary" required></textarea>
+            <textarea placeholder="Description" name="msg" id="description" required></textarea>
+            <button type="button" id="jiraFormSubmit" onclick="submitJiraForm()" class="btn">Submit</button>
+            <button type="button" class="btn cancel" onclick="closeJiraForm()">Close</button>
+        </div>
+    </div>
+    <div class="chat-popup" id="finalpage">
+        <div class="form-container">
+            <h1 style="text-align: center;">Support Request History</h1>
+            <div id="newRequestSpace">
+                <h4 style="text-align: center;">New Request Created</h4>
+                <table id="newRequestSpaceTable">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Status</th>
+                    </tr>
+                </table>
+            </div>
+            <div id="oldRequestSpace">
+                <h4 style="text-align: center;">Previous Requests</h4>
+                <table id="oldRequestSpaceTable">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Status</th>
+                    </tr>
+                </table>
+            </div>
+            <button type="button" class="btn closeall" onclick="closeall()">Close</button>
+        </div>
+    </div>
+    <script>
+    $(function() {
+        setMetaData();
+        getOldTickets();
+
+    });
+
+    function setMetaData() {
+        window.localStorage.setItem('Account ID', 'ABC-XYZK-8765');
+        window.localStorage.setItem('Account Name', 'ABC.com');
+        window.localStorage.setItem('ES IP', '10.11.80.21');
+        window.localStorage.setItem('Redis IP', '10.11.64.25');
+        window.localStorage.setItem('Page', window.location.pathname);
+        window.localStorage.setItem('Reporter', "dk@clevertap.com");
+        window.localStorage.setItem('TZ', "ME");
+
+    }
+
+    function openForm() {
+        document.getElementById("myhelpForm").style.display = "block";
+    }
+
+    function openJiraForm() {
+        document.getElementById("jiraForm").style.display = "block";
+        document.getElementById("myhelpForm").style.display = "none";
+
+    }
+
+    function printOldTickets(res) {
+        res = JSON.parse(res);
+        var tb = $('#oldRequestSpaceTable');
+        var maxResult = 5;
+        var threshold = 0;
+        if ((res["issues"]).length > maxResult) {
+            threshold = maxResult;
+        } else {
+            threshold = (res["issues"]).length;
+        }
+        for (i = 0; i < threshold; i++) {
+            result = res["issues"][i];
+            tid = result["key"];
+            link = "servicedesk/customer/portal/8" + tid;
+            status = result["fields"]["status"]["name"];
+            var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
+            tb.append(data);
+        }
+
+    }
+
+    function printSuccessResponse(res) {
+        res = JSON.parse(res);
+        var tb = $('#newRequestSpaceTable');
+
+        document.getElementById("jiraForm").style.display = "none";
+        document.getElementById("finalpage").style.display = "block";
+
+
+        tid = res["key"];
+        link = "servicedesk/customer/portal/8" + tid;
+        status = "Open";
+        var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
+        tb.append(data);
+
+    }
+
+    function printResults(res) {
+        res = JSON.parse(res);
+        var ul = $('#results');
+
+        var maxResult = 5;
+        var threshold = 0;
+
+        if ((res["results"]).length > maxResult) {
+            threshold = maxResult;
+        } else {
+            threshold = (res["results"]).length;
+        }
+        document.getElementById("searchResults").style.display = "block";
+        for (i = 0; i < threshold; i++) {
+            result = res["results"][i];
+            content = result["content"]["title"];
+            link = result["content"]["_links"]["self"];
+            var data = "<li><a href=" + link + ">" + content + "</a></li>";
+            ul.append(data);
+        }
+    }
+
+    function getOldTickets() {
+        reporter = getMetaData("Reporter");
+
+        var res = {};
+
+        var data = JSON.stringify();
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+
+                res = xhr.response;
+                printOldTickets(res);
+            }
+        });
+
+
+        url = "http://0.0.0.0:80/getOldTickets?reporter=" + reporter;
+        xhr.open("GET", url);
+        xhr.setRequestHeader("Accept", "application/json");
+
+        xhr.send(data);
+
+    }
+
+    function submitJiraForm() {
+        document.getElementById("jiraForm").style.display = "none";
+        document.getElementById("finalpage").style.display = "block";
+
+        summary = document.getElementById("summary").value;
+        desc = document.getElementById("description").value;
+
+
+
+        var res = {};
+
+        var data = JSON.stringify();
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+
+                res = xhr.response;
+                printSuccessResponse(res);
+            }
+        });
+
+        acid = getMetaData("Account ID");
+        acname = getMetaData("Account Name");
+        esip = getMetaData("ES IP");
+        redisip = getMetaData("Redis IP");
+        pageurl = getMetaData("Page");
+        reporter = getMetaData("Reporter");
+        tz = getMetaData("TZ");
+
+        meta = [acid, acname, esip, redisip, pageurl];
+        url = "http://0.0.0.0:80/createTicket?summary=" + summary + "&desc=" + desc + "&meta=" + meta + "&tz=" + tz;
+        xhr.open("GET", url);
+        xhr.setRequestHeader("Accept", "application/json");
+
+
+
+        // xhr.send(data);
+
+    }
+
+    function getMetaData(x) {
+
+        return window.localStorage.getItem(x);
+
+    }
+
+    function search() {
+        skey = document.getElementById("searchkey").value;
+
+        var res = {}
+
+        var data = JSON.stringify();
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+
+                res = xhr.response;
+                printResults(res);
+            }
+        });
+        url = "http://0.0.0.0:80/getSearchResults?skey=" + skey
+        xhr.open("GET", url);
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.send(data);
+
+    }
+
+    function closeForm() {
+        document.getElementById("myhelpForm").style.display = "none";
+    }
+
+    function closeall() {
+        document.getElementById("myhelpForm").style.display = "none";
+        document.getElementById("jiraForm").style.display = "none";
+        document.getElementById("searchResults").style.display = "none";
+        document.getElementById("finalpage").style.display = "none";
+
+    }
+
+    function closeJiraForm() {
+        document.getElementById("jiraForm").style.display = "none";
+        document.getElementById("searchResults").style.display = "none";
+        var ul = $('#results');
+
+        ul.remove();
+        $("#searchResults").prepend("<ul id='results'></ul>");
+
+    }
+    </script>
+</body>
+
+</html>

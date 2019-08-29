@@ -1,1 +1,0 @@
-# divyekant.github.io

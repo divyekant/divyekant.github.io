@@ -487,6 +487,11 @@ tr:nth-child(even) {
 
     function closeForm() {
         document.getElementById("myhelpForm").style.display = "none";
+        document.getElementById("searchResults").style.display = "none";
+        var ul = $('#results');
+
+        ul.remove();
+        $("#searchResults").prepend("<ul id='results'></ul>");
     }
 
     function closeall() {

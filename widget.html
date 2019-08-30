@@ -375,7 +375,8 @@ tr:nth-child(even) {
         for (i = 0; i < threshold; i++) {
             result = res["results"][i];
             content = result["content"]["title"];
-            link = result["content"]["_links"]["self"];
+            cid = result["content"]["id"];
+            link = "https://wizrocket.atlassian.net/wiki/spaces/CSK/pages/" +cid;
             var data = "<li><a target='_blank' href=" + link + ">" + content + "</a></li>";
             ul.append(data);
         }

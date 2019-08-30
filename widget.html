@@ -337,7 +337,7 @@ tr:nth-child(even) {
             tid = result["key"];
             link = "https://wizrocket.atlassian.net/servicedesk/customer/portal/8/" + tid;
             status = result["fields"]["status"]["name"];
-            var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
+            var data = "<tr><td><a target='_blank' href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
             tb.append(data);
         }
 
@@ -354,7 +354,7 @@ tr:nth-child(even) {
         tid = res["key"];
         link = "https://wizrocket.atlassian.net/servicedesk/customer/portal/8/" + tid;
         status = "Open";
-        var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
+        var data = "<tr><td><a target='_blank' href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
         tb.append(data);
 
     }
@@ -376,7 +376,7 @@ tr:nth-child(even) {
             result = res["results"][i];
             content = result["content"]["title"];
             link = result["content"]["_links"]["self"];
-            var data = "<li><a href=" + link + ">" + content + "</a></li>";
+            var data = "<li><a target='_blank' href=" + link + ">" + content + "</a></li>";
             ul.append(data);
         }
     }

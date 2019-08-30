@@ -137,24 +137,115 @@ td{border: 1px solid #dddddd;
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+.modal,
+.modal-box {
+  z-index: 900;
+}
 
+.modal-sandbox {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+.modal {
+  display: none; 
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgb(0,0,0);
+  background: rgba(0,0,0,.8);
+  overflow: auto;
+}
+
+.modal-box {
+  position: relative;
+  width: 80%;
+  max-width: 920px;
+  margin: 100px auto;
+  animation-name: modalbox;
+  animation-duration: .4s;
+  animation-timing-function: cubic-bezier(0,0,.3,1.6);
+}
+
+.modal-header {
+  padding: 20px 40px;
+  background: #546E7A;
+  color: #ffffff;
+}
+
+.modal-body {
+  background: #ECEFF1;
+  padding: 60px 40px;
+}
+
+/* Close Button */
+.close-modal {
+  text-align: right;
+  cursor: pointer;
+}
+
+/* Animation */
+@-webkit-keyframes modalbox {
+  0% {
+    top: -250px; 
+    opacity: 0;
+  }
+  100% {
+    top: 0; 
+    opacity: 1;
+  }
+}
+
+@keyframes modalbox {
+  0% {
+    top: -250px; 
+    opacity: 0;
+  }
+  100% {
+    top: 0; 
+    opacity: 1;
+  }
+}
 </style>
 </head>
 
 <body>
+    <a href="#" class="modal-trigger" data-modal="modal-name">Modal open!</a>
+    <!-- Modal -->
+    <div class="modal" id="modal-name">
+        <div class="modal-sandbox"></div>
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="close-modal">&#10006;</div>
+                <h1>Simple modal box</h1>
+            </div>
+            <div class="modal-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Hic soluta saepe, atque, iure quidem maiores non dolores, fuga eaque voluptatibus corporis accusantium quas. Eligendi velit eum fugiat eius? Distinctio reiciendis sint error, repellat ut soluta doloremque, accusamus vitae placeat?</p>
+                <p>Laboriosam voluptas, iure rem provident laborum culpa atque fugit inventore sit. Corrupti dolore architecto inventore officia, odit totam voluptatem laboriosam tempore reiciendis, et neque, consequuntur. Non, tenetur? Tempore reprehenderit tenetur nemo asperiores alias commodi assumenda architecto minima numquam repellendus debitis nulla, rerum officia itaque, sunt nihil sequi quod perspiciatis, animi quas voluptates velit aperiam voluptatem.</p>
+                <br />
+                <button class="close-modal">Close!</button>
+            </div>
+        </div>
+    </div>
     <h2>Ticketing Widget POC</h2>
     <div style="width:50%; text-align: justify;">
-      <p>IMPORTANT: Please click on the Alert icon on your address bar and click on Load Scrip to make this work.</p>
-    <p>Concept:</p>
-    <p>A Widget needs to be available on the dashboard which first allows the Dashboard User to check for relevant articles, then the User can go ahead and search via a relevant Keyword.
-    Now, all articles are stored at CS's Knowledge base, which is maintained by Aaryender and can be found here: https://wizrocket.atlassian.net/wiki/spaces/CSK/overview</p>
-    <p>The number of articles shown as per result are restricted to 5 for the POC and are ordered by score given to each result by Confluence search api itself.</p>
-    <p>Clicking any of the articles in this POC will can open up a modal with details of the article, it can also be redirected to the main conflunce page.</p>
-    <p>If the Dashboard User is unable to find any article useful for him/herself, they can go ahead an contact DK.</p>
-    <p>Here, they can log a summary and complete description of the problem they are facing. The widget on submit click finds meta data and combines it with User Input to create a Jira Ticket.</p>
-    <p>For POC purposes a few values have been hardcoded and attached to the description the User enters, this is after the User clicks on sumbit button.</p>
-    <p>Also, this widget is working perfectly, so each time someone clicks on submit a ticket is logged, so be carefully while checking this around.</p>
-    <p>Lastly, you can check the ticket created on to the last page, where if you clcik you will be taken to the portal with detais of the ticket and also if you explore you can see all past tickets.</p>
+        <p>IMPORTANT: Please click on the Alert icon on your address bar and click on Load Scrip to make this work.</p>
+        <p>Concept:</p>
+        <p>A Widget needs to be available on the dashboard which first allows the Dashboard User to check for relevant articles, then the User can go ahead and search via a relevant Keyword.
+            Now, all articles are stored at CS's Knowledge base, which is maintained by Aaryender and can be found here: https://wizrocket.atlassian.net/wiki/spaces/CSK/overview</p>
+        <p>The number of articles shown as per result are restricted to 5 for the POC and are ordered by score given to each result by Confluence search api itself.</p>
+        <p>Clicking any of the articles in this POC will can open up a modal with details of the article, it can also be redirected to the main conflunce page.</p>
+        <p>If the Dashboard User is unable to find any article useful for him/herself, they can go ahead an contact DK.</p>
+        <p>Here, they can log a summary and complete description of the problem they are facing. The widget on submit click finds meta data and combines it with User Input to create a Jira Ticket.</p>
+        <p>For POC purposes a few values have been hardcoded and attached to the description the User enters, this is after the User clicks on sumbit button.</p>
+        <p>Also, this widget is working perfectly, so each time someone clicks on submit a ticket is logged, so be carefully while checking this around.</p>
+        <p>Lastly, you can check the ticket created on to the last page, where if you clcik you will be taken to the portal with detais of the ticket and also if you explore you can see all past tickets.</p>
     </div>
     <button class="open-button" onclick="openForm()">We are here!</button>
     <div class="chat-popup" id="myhelpForm">
@@ -244,7 +335,7 @@ tr:nth-child(even) {
         for (i = 0; i < threshold; i++) {
             result = res["issues"][i];
             tid = result["key"];
-            link = "servicedesk/customer/portal/8" + tid;
+            link = "https://wizrocket.atlassian.net/servicedesk/customer/portal/8/" + tid;
             status = result["fields"]["status"]["name"];
             var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
             tb.append(data);
@@ -261,7 +352,7 @@ tr:nth-child(even) {
 
 
         tid = res["key"];
-        link = "servicedesk/customer/portal/8" + tid;
+        link = "https://wizrocket.atlassian.net/servicedesk/customer/portal/8/" + tid;
         status = "Open";
         var data = "<tr><td><a href=" + link + ">" + tid + "</a></td><td>" + status + "</td>";
         tb.append(data);
@@ -414,6 +505,19 @@ tr:nth-child(even) {
         $("#searchResults").prepend("<ul id='results'></ul>");
 
     }
+
+
+    $(".modal-trigger").click(function(e) {
+        e.preventDefault();
+        dataModal = $(this).attr("data-modal");
+        $("#" + dataModal).css({ "display": "block" });
+        // $("body").css({"overflow-y": "hidden"}); //Prevent double scrollbar.
+    });
+
+    $(".close-modal, .modal-sandbox").click(function() {
+        $(".modal").css({ "display": "none" });
+        // $("body").css({"overflow-y": "auto"}); //Prevent double scrollbar.
+    });
     </script>
 </body>
 
